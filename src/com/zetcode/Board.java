@@ -1,30 +1,9 @@
 package com.zetcode;
 
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Random;
-import javax.swing.Timer;
+import javax.swing.*;
+import java.awt.*;
 
-class MyPoint extends Point {
 
-    public MyPoint(int x, int y) {
-        super(x, y);
-    }
-
-    public int deltaX = 0;
-    public int deltaY = 0;
-}
 
 public class Board extends JPanel {
 
@@ -37,16 +16,10 @@ public class Board extends JPanel {
     private final int FPS = 60;
     private final int PERIOD = 1000 / FPS;
 
-    private final MyPoint p[] = new MyPoint[ALL_DOTS];
-
     private boolean inGame = true;
 
     private Timer timer;
 
-    private Snake snake;
-    private Apple apple;
-
-    private Animation anim;
 
     public Board() {
 
