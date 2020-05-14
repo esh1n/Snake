@@ -2,21 +2,13 @@ package com.zetcode;
 
 import javafx.util.Pair;
 
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
-import javax.swing.Timer;
 
 class MyPoint extends Point {
 
@@ -27,29 +19,29 @@ class MyPoint extends Point {
     public int deltaX = 0;
     public int deltaY = 0;
 
-    public Direction getHorizontalDirectionTo(MyPoint next){
-        if (next.x == x) {
+    public Direction getHorizontalDirectionTo(MyPoint point) {
+        if (point.x == x) {
             return Direction.NO_DIRECTION;
-        } else if (next.x > x) {
+        } else if (point.x > x) {
             return Direction.RIGHT;
         } else {
             return Direction.LEFT;
         }
     }
 
-    public Direction getVerticalDirectionTo(MyPoint next){
-        if (next.y == y) {
+    public Direction getVerticalDirectionTo(MyPoint point) {
+        if (point.y == y) {
             return Direction.NO_DIRECTION;
-        } else if (next.y > y) {
+        } else if (point.y > y) {
 
-            return Direction.UP;
-        } else {
             return Direction.DOWN;
+        } else {
+            return Direction.UP;
         }
     }
 
-    private Pair<Direction,Direction> calculateFollowerDirection(MyPoint next){
-       return new Pair<>(getHorizontalDirectionTo(next), getVerticalDirectionTo(next));
+    private Pair<Direction, Direction> calculateFollowerDirection(MyPoint next) {
+        return new Pair<>(getHorizontalDirectionTo(next), getVerticalDirectionTo(next));
     }
 }
 
@@ -188,7 +180,8 @@ public class Board extends JPanel {
 
             } else {
 
-                newPoint.x = last.x - DOT_SIZE;;
+                newPoint.x = last.x - DOT_SIZE;
+                ;
                 newPoint.y = last.y;
             }
 
@@ -198,67 +191,9 @@ public class Board extends JPanel {
     }
 
 
-
     private void move() {
 
-        if (anim.finished()) {
-
-            anim.reset();
-
-            if (snake.getDirection() == Direction.RIGHT) {
-
-                p[0].deltaX = 1;
-                p[0].deltaY = 0;
-            }
-
-            if (snake.getDirection() == Direction.LEFT) {
-
-                p[0].deltaX = -1;
-                p[0].deltaY = 0;
-            }
-
-            if (snake.getDirection() == Direction.UP) {
-
-                p[0].deltaX = 0;
-                p[0].deltaY = -1;
-            }
-
-            if (snake.getDirection() == Direction.DOWN) {
-
-                p[0].deltaX = 0;
-                p[0].deltaY = 1;
-            }
-
-            for (int z = 0; z < snake.size(); z++) {
-
-                MyPoint next = p[z + 1];
-                MyPoint current = p[z];
-                var verticalDirection = current.getVerticalDirectionTo(next);
-                var horizontalDirection = current.getHorizontalDirectionTo(next);
-
-                if (next.x == current.x) {
-
-                    next.deltaX = 0;
-                } else if (next.x > current.x) {
-
-                    next.deltaX = -1;
-                } else {
-
-                    next.deltaX = 1;
-                }
-
-                if (next.y == current.y) {
-                    next.deltaY = 0;
-                } else if (next.y > current.y) {
-
-                    next.deltaY = -1;
-                } else {
-
-                    next.deltaY = 1;
-                }
-            }
-
-        } else {
+        if (!anim.finished()) {
 
             anim.inc();
 
@@ -266,7 +201,29 @@ public class Board extends JPanel {
 
                 p[z].translate(p[z].deltaX, p[z].deltaY);
             }
+        } else {
+
+            anim.reset();
+
+            MyPoint head = p[0];
+            locateHead(head, snake.getDirection());
+
+            for (int z = 0; z < snake.size(); z++) {
+                MyPoint next = p[z + 1];
+                MyPoint prev = p[z];
+                var horizontalDirection = next.getHorizontalDirectionTo(prev);
+                var verticalDirection = next.getVerticalDirectionTo(prev);
+                next.deltaX = horizontalDirection.getDelta();
+                next.deltaY = verticalDirection.getDelta();
+            }
         }
+    }
+
+    private void locateHead(MyPoint head, Direction direction) {
+        Direction hDirection = direction.isHorizontal() ? direction : Direction.NO_DIRECTION;
+        Direction vDirection = direction.isVertical() ? direction : Direction.NO_DIRECTION;
+        head.deltaX = hDirection.getDelta();
+        head.deltaY = vDirection.getDelta();
     }
 
     private void checkCollision() {
