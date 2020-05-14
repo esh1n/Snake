@@ -1,5 +1,7 @@
 package com.zetcode;
 
+import javafx.util.Pair;
+
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,6 +26,31 @@ class MyPoint extends Point {
 
     public int deltaX = 0;
     public int deltaY = 0;
+
+    public Direction getHorizontalDirectionTo(MyPoint next){
+        if (next.x == x) {
+            return Direction.NO_DIRECTION;
+        } else if (next.x > x) {
+            return Direction.RIGHT;
+        } else {
+            return Direction.LEFT;
+        }
+    }
+
+    public Direction getVerticalDirectionTo(MyPoint next){
+        if (next.y == y) {
+            return Direction.NO_DIRECTION;
+        } else if (next.y > y) {
+
+            return Direction.UP;
+        } else {
+            return Direction.DOWN;
+        }
+    }
+
+    private Pair<Direction,Direction> calculateFollowerDirection(MyPoint next){
+       return new Pair<>(getHorizontalDirectionTo(next), getVerticalDirectionTo(next));
+    }
 }
 
 public class Board extends JPanel {
@@ -152,22 +179,25 @@ public class Board extends JPanel {
 
             Point last = p[snake.size() - 1];
 
+            MyPoint newPoint = p[snake.size()];
             if (snake.getDirection() == Direction.RIGHT
                     || snake.getDirection() == Direction.LEFT) {
 
-                p[snake.size()].x = last.x;
-                p[snake.size()].y = last.y - DOT_SIZE;
+                newPoint.x = last.x;
+                newPoint.y = last.y - DOT_SIZE;
 
             } else {
 
-                p[snake.size()].x = last.x - DOT_SIZE;;
-                p[snake.size()].y = last.y;
+                newPoint.x = last.x - DOT_SIZE;;
+                newPoint.y = last.y;
             }
 
             snake.grow();
             locateApple();
         }
     }
+
+
 
     private void move() {
 
@@ -201,26 +231,30 @@ public class Board extends JPanel {
 
             for (int z = 0; z < snake.size(); z++) {
 
-                if (p[z + 1].x == p[z].x) {
+                MyPoint next = p[z + 1];
+                MyPoint current = p[z];
+                var verticalDirection = current.getVerticalDirectionTo(next);
+                var horizontalDirection = current.getHorizontalDirectionTo(next);
 
-                    p[z + 1].deltaX = 0;
-                } else if (p[z + 1].x > p[z].x) {
+                if (next.x == current.x) {
 
-                    p[z + 1].deltaX = -1;
+                    next.deltaX = 0;
+                } else if (next.x > current.x) {
+
+                    next.deltaX = -1;
                 } else {
 
-                    p[z + 1].deltaX = 1;
+                    next.deltaX = 1;
                 }
 
-                if (p[z + 1].y == p[z].y) {
+                if (next.y == current.y) {
+                    next.deltaY = 0;
+                } else if (next.y > current.y) {
 
-                    p[z + 1].deltaY = 0;
-                } else if (p[z + 1].y > p[z].y) {
-
-                    p[z + 1].deltaY = -1;
+                    next.deltaY = -1;
                 } else {
 
-                    p[z + 1].deltaY = 1;
+                    next.deltaY = 1;
                 }
             }
 
