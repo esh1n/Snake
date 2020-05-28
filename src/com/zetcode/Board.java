@@ -18,7 +18,7 @@ class MyPoint extends Point {
 
     public int deltaX = 0;
     public int deltaY = 0;
-
+    //this.point = (5,3) newPoint = (5,4)
     public Direction getHorizontalDirectionTo(MyPoint point) {
         if (point.x == x) {
             return Direction.NO_DIRECTION;
@@ -33,11 +33,14 @@ class MyPoint extends Point {
         if (point.y == y) {
             return Direction.NO_DIRECTION;
         } else if (point.y > y) {
-
             return Direction.DOWN;
         } else {
             return Direction.UP;
         }
+    }
+
+    public boolean isCollide(MyPoint point) {
+        return x == point.x && y == point.y;
     }
 
     private Pair<Direction, Direction> calculateFollowerDirection(MyPoint next) {
@@ -87,7 +90,7 @@ public class Board extends JPanel {
         snake = new Snake();
         apple = new Apple();
         anim = new Animation();
-
+        //TODO make random initialization
         for (int y = 0; y < ALL_DOTS; y++) {
 
             p[y] = new MyPoint(0, 0);
@@ -129,7 +132,7 @@ public class Board extends JPanel {
     private void drawSnake(Graphics g) {
 
         for (int z = 0; z < snake.size(); z++) {
-
+            //TODO вынести картинку в переменную и вставлять ее в метод
             if (z == 0) {
 
                 g.drawImage(snake.getHead(), p[z].x, p[z].y, this);
@@ -167,11 +170,16 @@ public class Board extends JPanel {
 
     private void checkApple() {
 
-        if (p[0].x == apple.getX() && p[0].y == apple.getY()) {
+        MyPoint head = p[0];
+        if (head.isCollide(apple.getPoint())) {
 
             Point last = p[snake.size() - 1];
 
             MyPoint newPoint = p[snake.size()];
+            //TODO
+            //TODO 1 - direction beforePrev to Prev
+            //TODO 2 - funtion return MyPoint: x = last.x + DOT_SIZE *  HORIZONTAL_DIRECTION
+            //TODO 3 y = last.y + DOT_SIZE *  VERTICAL_DIRECTION
             if (snake.getDirection() == Direction.RIGHT
                     || snake.getDirection() == Direction.LEFT) {
 
@@ -179,9 +187,7 @@ public class Board extends JPanel {
                 newPoint.y = last.y - DOT_SIZE;
 
             } else {
-
                 newPoint.x = last.x - DOT_SIZE;
-                ;
                 newPoint.y = last.y;
             }
 
@@ -190,15 +196,26 @@ public class Board extends JPanel {
         }
     }
 
+//    private MyPoint calculateNewTail(){
+//        Point beforeLast = p[snake.size()];
+//        Point last = p[snake.size() - 1];
+//    (5,3) (5,4)
+//     1
+//     2
+//     3
+//     4
+//
+//    }
+
 
     private void move() {
 
         if (!anim.finished()) {
-
             anim.inc();
 
+            //TODO make move -вынести в функцию
             for (int z = 0; z < snake.size(); z++) {
-
+                //TODO apply смещение
                 p[z].translate(p[z].deltaX, p[z].deltaY);
             }
         } else {
@@ -229,12 +246,14 @@ public class Board extends JPanel {
     private void checkCollision() {
 
         for (int z = snake.size(); z > 0; z--) {
-
+            //TODO use funtion check collizion checkCollizion(head,element)
             if (z > 4 && p[0].x == p[z].x && p[0].y == p[z].y) {
 
                 inGame = false;
+                break;
             }
         }
+        //TODO вынести всю функцию - столкнулись ли с головой
 
         if (p[0].y >= BOARD_HEIGHT) {
 
@@ -256,6 +275,8 @@ public class Board extends JPanel {
             inGame = false;
         }
 
+        //TODO не вышли за переделы доски
+
         if (!inGame) {
 
             timer.stop();
@@ -263,12 +284,10 @@ public class Board extends JPanel {
     }
 
     private void locateApple() {
-
+        //TODO вынести функцию создания координат и распологать яблоко по координате MyPoint
         var random = new Random();
-
         int r = random.nextInt(RAND_POS);
         apple.setX(r * DOT_SIZE);
-
         r = random.nextInt(RAND_POS);
         apple.setY(r * DOT_SIZE);
     }
@@ -276,12 +295,10 @@ public class Board extends JPanel {
     private void doGameCycle() {
 
         if (inGame) {
-
             checkApple();
             checkCollision();
             move();
         }
-
         repaint();
     }
 
@@ -291,16 +308,15 @@ public class Board extends JPanel {
         public void keyPressed(KeyEvent e) {
 
             int key = e.getKeyCode();
-
-            if (key == KeyEvent.VK_LEFT &&
-
-                    snake.getDirection() != Direction.RIGHT) {
-
+//            keyDirection = IsHorizontal
+//            snake.getDirection().isHorizontal()
+//            boolean shallDriveNext = IsHorizontal xor horizontal;
+//            ||, and, xor
+            if (key == KeyEvent.VK_LEFT && snake.getDirection() != Direction.RIGHT) {
                 snake.setDirection(Direction.LEFT);
             }
 
-            if (key == KeyEvent.VK_RIGHT &&
-                    snake.getDirection() != Direction.LEFT) {
+            if (key == KeyEvent.VK_RIGHT && snake.getDirection() != Direction.LEFT) {
 
                 snake.setDirection(Direction.RIGHT);
             }
@@ -323,7 +339,6 @@ public class Board extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
             doGameCycle();
         }
     }

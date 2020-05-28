@@ -1,7 +1,7 @@
 package com.zetcode;
 
-import java.awt.Image;
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import java.awt.*;
 
 public class Apple {
 
@@ -38,6 +38,10 @@ public class Apple {
     public void setY(int y) {
 
         this.y = y;
+    }
+
+    public MyPoint getPoint() {
+        return new MyPoint(x, y);
     }
 
     public Image getApple() {
