@@ -1,6 +1,5 @@
 package com.zetcode;
 
-import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -132,19 +131,12 @@ public class Board extends JPanel {
     private void drawSnake(Graphics g) {
 
         for (int z = 0; z < snake.size(); z++) {
-            //TODO вынести картинку в переменную и вставлять ее в метод
-            if (z == 0) {
-
-                g.drawImage(snake.getHead(), p[z].x, p[z].y, this);
-            } else {
-
-                g.drawImage(snake.getBody(), p[z].x, p[z].y, this);
-            }
+            var image = z == 0 ? snake.getHead() : snake.getBody();
+            g.drawImage(image, p[z].x, p[z].y, this);
         }
     }
 
     private void drawApple(Graphics g) {
-
         g.drawImage(apple.getApple(), apple.getX(), apple.getY(), this);
     }
 
